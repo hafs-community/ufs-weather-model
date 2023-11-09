@@ -2,7 +2,7 @@ help([[
 loads UFS Model prerequisites on Cactus and Dogwood
 ]])
 
--- First, look for libraries on "prod" space
+-- First, look for libraries in "prod" space
 PrgEnv_intel_ver=os.getenv("PrgEnv_intel_ver") or "8.1.0"
 load(pathJoin("PrgEnv-intel", PrgEnv_intel_ver))
 
@@ -25,11 +25,11 @@ local ufs_modules = {
   {["jasper"]          = "2.0.25"},
   {["zlib"]            = "1.2.11"},
   {["libpng"]          = "1.6.37"},
-  {["hdf5"]            = "1.10.6"},
-  {["netcdf"]          = "4.7.4"},
+  {["hdf5"]            = "1.14.0"},
+  {["netcdf"]          = "4.9.2"},
   {["pio"]             = "2.5.10"},
-  {["esmf"]            = "8.4.1"},
-  {["fms"]             = "2022.04"},
+  {["esmf"]            = "8.4.2"},
+  {["fms"]             = "2023.01"},
   {["bacio"]           = "2.4.1"},
   {["crtm"]            = "2.4.0"},
   {["g2"]              = "3.4.5"},
@@ -37,8 +37,8 @@ local ufs_modules = {
   {["ip"]              = "3.3.3"},
   {["sp"]              = "2.3.3"},
   {["w3emc"]           = "2.9.2"},
---  {["gftl-shared"]     = "v1.5.0"},
---  {["mapl"]            = "2.35.2-esmf-8.4.1"},
+  {["gftl-shared"]     = "v1.5.0"},
+  {["mapl"]            = "2.35.2-esmf-8.4.2"},
 }
 
 for i = 1, #ufs_modules do
