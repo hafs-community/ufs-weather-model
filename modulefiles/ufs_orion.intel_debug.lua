@@ -12,7 +12,7 @@ python_ver=os.getenv("python_ver") or "3.7.5"
 load(pathJoin("python", python_ver))
 
 --prepend_path("MODULEPATH", "/apps/contrib/NCEP/libs/hpc-stack/modulefiles/stack")
-prepend_path("MODULEPATH", "/work/noaa/epic-ps/hpc-stack/libs/intel/2022.1.2/modulefiles/stack")
+prepend_path("MODULEPATH", "/work/noaa/epic/role-epic/contrib/orion/hpc-stack/intel-2022.1.2/modulefiles/stack")
 
 hpc_ver=os.getenv("hpc_ver") or "1.2.0"
 load(pathJoin("hpc", hpc_ver))
@@ -22,6 +22,9 @@ load(pathJoin("hpc-intel", hpc_intel_ver))
 
 hpc_impi_ver=os.getenv("hpc_impi_ver") or "2022.1.2"
 load(pathJoin("hpc-impi", hpc_impi_ver))
+
+setenv("fms_ver", "2022.04")
+setenv("bufr_ver", "11.7.0")
 
 load("ufs_common_debug")
 
