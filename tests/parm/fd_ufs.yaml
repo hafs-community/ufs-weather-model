@@ -1183,12 +1183,12 @@
      #-----------------------------------
      #
      - standard_name: Foxx_rain
-       alias: mean_prec_rate
+       alias: inst_prec_rate
        canonical_units: kg m-2 s-1
        description: ocean import
      #
      - standard_name: Faxd_rain
-       alias: mean_prec_rate
+       alias: inst_prec_rate
        canonical_units: kg m-2 s-1
        description: data atmosphere export
      #
