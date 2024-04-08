@@ -8,8 +8,8 @@
   branch = production/hafs.v2
 [submodule "stochastic_physics"]
   path = stochastic_physics
-  url = https://github.com/NOAA-PSL/stochastic_physics
-  branch = master
+  url = https://github.com/hafs-community/stochastic_physics
+  branch = production/hafs.v2
 [submodule "CMakeModules"]
   path = CMakeModules
   url = https://github.com/NOAA-EMC/CMakeModules
