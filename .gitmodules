@@ -24,8 +24,8 @@
   branch = emc/develop
 [submodule "MOM6"]
   path = MOM6-interface/MOM6
-  url = https://github.com/NOAA-EMC/MOM6
-  branch = dev/emc
+  url = https://github.com/hafs-community/MOM6
+  branch = production/hafs.v2
 [submodule "CICE"]
   path = CICE-interface/CICE
   url = https://github.com/NOAA-EMC/CICE
@@ -40,8 +40,8 @@
   branch = develop
 [submodule "AQM"]
   path = AQM
-  url = https://github.com/NOAA-EMC/AQM
-  branch = develop
+  url = https://github.com/hafs-community/AQM
+  branch = production/hafs.v2
 [submodule "NOAHMP"]
   path = NOAHMP-interface/noahmp
   url = https://github.com/NOAA-EMC/noahmp
