@@ -2,34 +2,24 @@ help([[
 loads UFS Model prerequisites for Hera/Intel
 ]])
 
-prepend_path("MODULEPATH", "/scratch1/NCEPDEV/nems/emc.nemspara/soft/modulefiles")
-miniconda3_ver=os.getenv("miniconda3_ver") or "3.7.3"
-load(pathJoin("miniconda3", miniconda3_ver))
+prepend_path("MODULEPATH", "/scratch1/NCEPDEV/nems/role.epic/spack-stack/spack-stack-1.6.0/envs/unified-env-rocky8/install/modulefiles/Core")
 
-prepend_path("MODULEPATH", "/contrib/sutils/modulefiles")
-load("sutils")
+stack_intel_ver=os.getenv("stack_intel_ver") or "2021.5.0"
+load(pathJoin("stack-intel", stack_intel_ver))
 
-cmake_ver=os.getenv("cmake_ver") or "3.20.1"
+stack_impi_ver=os.getenv("stack_impi_ver") or "2021.5.1"
+load(pathJoin("stack-intel-oneapi-mpi", stack_impi_ver))
+
+cmake_ver=os.getenv("cmake_ver") or "3.23.1"
 load(pathJoin("cmake", cmake_ver))
 
-intel_ver=os.getenv("intel_ver") or "2022.1.2"
-load(pathJoin("intel", intel_ver))
-
-impi_ver=os.getenv("impi_ver") or "2022.1.2"
-load(pathJoin("impi", impi_ver))
-
-prepend_path("MODULEPATH", "/scratch1/NCEPDEV/nems/role.epic/hpc-stack/libs/intel-2022.1.2/modulefiles/stack")
-
-hpc_ver=os.getenv("hpc_ver") or "1.2.0"
-load(pathJoin("hpc", hpc_ver))
-
-hpc_intel_ver=os.getenv("hpc_intel_ver") or "2022.1.2"
-load(pathJoin("hpc-intel", hpc_intel_ver))
-
-hpc_impi_ver=os.getenv("hpc_impi_ver") or "2022.1.2"
-load(pathJoin("hpc-impi", hpc_impi_ver))
+python_ver=os.getenv("python_ver") or "3.10.13"
+load(pathJoin("python", python_ver))
 
 load("ufs_common")
+
+nccmp_ver=os.getenv("nccmp_ver") or "1.9.0.1"
+load(pathJoin("nccmp", nccmp_ver))
 
 setenv("CC", "mpiicc")
 setenv("CXX", "mpiicpc")

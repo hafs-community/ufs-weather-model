@@ -16,9 +16,9 @@ export F90=${F90:-mpif90}
 export FC=${FC:-mpif90}
 
 ##
-## set up variables for ../cmake/configure_linux.gnu.cmake
+## set up variables for ../cmake/configure_linux.intel.cmake
 ##
-export CMAKE_Platform=linux.gnu
+export CMAKE_Platform=linux.intel
 
 ##
 ## use own NetCDF library
