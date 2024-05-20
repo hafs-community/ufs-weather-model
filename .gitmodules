@@ -8,8 +8,8 @@
   branch = support/HAFS
 [submodule "stochastic_physics"]
   path = stochastic_physics
-  url = https://github.com/NOAA-PSL/stochastic_physics
-  branch = master
+  url = https://github.com/hafs-community/stochastic_physics
+  branch = support/HAFS
 [submodule "CMakeModules"]
   path = CMakeModules
   url = https://github.com/NOAA-EMC/CMakeModules
@@ -24,8 +24,8 @@
   branch = emc/develop
 [submodule "MOM6"]
   path = MOM6-interface/MOM6
-  url = https://github.com/NOAA-EMC/MOM6
-  branch = dev/emc
+  url = https://github.com/hafs-community/MOM6
+  branch = support/HAFS
 [submodule "CICE"]
   path = CICE-interface/CICE
   url = https://github.com/NOAA-EMC/CICE
@@ -40,8 +40,8 @@
   branch = develop
 [submodule "AQM"]
   path = AQM
-  url = https://github.com/NOAA-EMC/AQM
-  branch = develop
+  url = https://github.com/hafs-community/AQM
+  branch = support/HAFS
 [submodule "NOAHMP"]
   path = NOAHMP-interface/noahmp
   url = https://github.com/NOAA-EMC/noahmp

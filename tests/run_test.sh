@@ -15,21 +15,13 @@ cleanup() {
 }
 
 write_fail_test() {
-  if [[ ${OPNREQ_TEST} == true ]]; then
-    echo "${TEST_NAME} ${TEST_NR} failed in run_test" >> $PATHRT/fail_opnreq_test_${TEST_NR}
-  else
-    echo "${TEST_NAME} ${TEST_NR} failed in run_test" >> $PATHRT/fail_test_${TEST_NR}
-  fi
+  echo "${TEST_NAME}_${RT_COMPILER} ${TEST_NR} failed in run_test" >> $PATHRT/fail_test_${TEST_NR}
   exit 1
 }
 
 remove_fail_test() {
-    echo "Removing test failure flag file for ${TEST_NAME} ${TEST_NR}"
-    if [[ ${OPNREQ_TEST} == true ]] ; then
-        rm -f $PATHRT/fail_opnreq_test_${TEST_NR}
-    else
-        rm -f $PATHRT/fail_test_${TEST_NR}
-    fi
+    echo "Removing test failure flag file for ${TEST_NAME}_${RT_COMPILER} ${TEST_NR}"
+    rm -f $PATHRT/fail_test_${TEST_NR}
 }
 
 if [[ $# != 5 ]]; then
@@ -43,36 +35,40 @@ export TEST_NAME=$3
 export TEST_NR=$4
 export COMPILE_NR=$5
 
+echo "PATHRT: ${PATHRT}"
+echo "RUNDIR_ROOT: ${RUNDIR_ROOT}"
+echo "TEST_NAME: ${TEST_NAME}"
+echo "TEST_NR: ${TEST_NR}"
+echo "COMPILE_NR: ${COMPILE_NR}"
+
 cd ${PATHRT}
-OPNREQ_TEST=${OPNREQ_TEST:-false}
-remove_fail_test
+
+
+unset MODEL_CONFIGURE
+unset UFS_CONFIGURE
 
 [[ -e ${RUNDIR_ROOT}/run_test_${TEST_NR}.env ]] && source ${RUNDIR_ROOT}/run_test_${TEST_NR}.env
 source default_vars.sh
+[[ -e ${RUNDIR_ROOT}/run_test_${TEST_NR}.env ]] && source ${RUNDIR_ROOT}/run_test_${TEST_NR}.env
 source tests/$TEST_NAME
-[[ -e ${RUNDIR_ROOT}/opnreq_test_${TEST_NR}.env ]] && source ${RUNDIR_ROOT}/opnreq_test_${TEST_NR}.env
+
+remove_fail_test
 
 # Save original CNTL_DIR name as INPUT_DIR for regression
 # tests that try to copy input data from CNTL_DIR
+
 export INPUT_DIR=${CNTL_DIR}
+
 # Append RT_SUFFIX to RUNDIR, and BL_SUFFIX to CNTL_DIR
-export RUNDIR=${RUNDIR_ROOT}/${TEST_NAME}${RT_SUFFIX}
+export RUNDIR=${RUNDIR_ROOT}/${TEST_NAME}_${RT_COMPILER}${RT_SUFFIX}
 export CNTL_DIR=${CNTL_DIR}${BL_SUFFIX}
 
 export JBNME=$(basename $RUNDIR_ROOT)_${TEST_NR}
 
-echo -n "${TEST_NAME}, $( date +%s )," > ${LOG_DIR}/job_${JOB_NR}_timestamp.txt
+echo -n "${TEST_NAME}_${RT_COMPILER}, $( date +%s )," > ${LOG_DIR}/job_${JOB_NR}_timestamp.txt
 
-if [[ ${OPNREQ_TEST} == false ]]; then
-  REGRESSIONTEST_LOG=${LOG_DIR}/rt_${TEST_NR}_${TEST_NAME}${RT_SUFFIX}.log
-else
-  REGRESSIONTEST_LOG=${LOG_DIR}/opnReqTest_${TEST_NAME}${RT_SUFFIX}.log
-fi
-export REGRESSIONTEST_LOG
-
-rm -f ${REGRESSIONTEST_LOG}
-
-echo "Test ${TEST_NR} ${TEST_NAME} ${TEST_DESCR}"
+export RT_LOG=${LOG_DIR}/rt_${TEST_NR}_${TEST_NAME}_${RT_COMPILER}${RT_SUFFIX}.log
+echo "Test ${TEST_NR} ${TEST_NAME}_${RT_COMPILER} ${TEST_DESCR}"
 
 source rt_utils.sh
 source atparse.bash
@@ -84,29 +80,62 @@ cd $RUNDIR
 ###############################################################################
 # Make configure and run files
 ###############################################################################
-MACHINE_ID=${MACHINE_ID:-false}
+
 # FV3 executable:
 cp ${PATHRT}/fv3_${COMPILE_NR}.exe                 fv3.exe
 
 # modulefile for FV3 prerequisites:
-if [[ $MACHINE_ID == gaea.* ]] || [[ $MACHINE_ID == linux.* ]]; then
-  cp ${PATHRT}/modules.fv3_${COMPILE_NR}             modules.fv3
+mkdir -p modulefiles
+if [[ $MACHINE_ID == linux ]]; then
+  cp ${PATHRT}/modules.fv3_${COMPILE_NR}             ./modulefiles/modules.fv3
 else
-  cp ${PATHRT}/modules.fv3_${COMPILE_NR}.lua             modules.fv3.lua
+  cp ${PATHRT}/modules.fv3_${COMPILE_NR}.lua         ./modulefiles/modules.fv3.lua
 fi
-cp ${PATHTR}/modulefiles/ufs_common*               .
+cp ${PATHTR}/modulefiles/ufs_common*                 ./modulefiles/.
 
 # Get the shell file that loads the "module" command and purges modules:
 cp ${PATHRT}/module-setup.sh                       module-setup.sh
+
+# load nccmp module
+if [[ " s4 hera orion hercules gaea-c5 jet derecho acorn wcoss2 " =~ " $MACHINE_ID " ]]; then
+  if [[ " wcoss2 acorn " =~ " ${MACHINE_ID} " ]] ; then
+    module load intel/19.1.3.304 netcdf/4.7.4
+    module load nccmp
+  elif [[ " s4 " =~ " ${MACHINE_ID} " ]] ; then
+    module use /data/prod/jedi/spack-stack/spack-stack-1.4.1/envs/ufs-pio-2.5.10/install/modulefiles/Core
+    module load stack-intel/2021.5.0 stack-intel-oneapi-mpi/2021.5.0
+    module load miniconda/3.9.12
+    module load nccmp/1.9.0.1
+  elif [[ " hera orion hercules gaea-c5 jet " =~ " ${MACHINE_ID} " ]] ; then
+    module use modulefiles
+    module load modules.fv3
+  else
+    module load nccmp
+  fi
+fi
 
 SRCD="${PATHTR}"
 RUND="${RUNDIR}"
 
 # FV3_RUN could have multiple entry seperated by space
-for i in ${FV3_RUN:-fv3_run.IN}
-do
-  atparse < ${PATHRT}/fv3_conf/${i} >> fv3_run
-done
+if [ ! -z "$FV3_RUN" ]; then
+  for i in ${FV3_RUN}
+  do
+    atparse < ${PATHRT}/fv3_conf/${i} >> fv3_run
+  done
+else
+  echo "No FV3_RUN set in test file"
+  exit 1
+fi
+
+# Magic to handle namelist versions of &cires_ugwp_nml
+if [[ ${DO_UGWP_V1:-.false.} == .true. ]] ; then
+  export HIDE_UGWPV0='!'
+  export HIDE_UGWPV1=' '
+else
+  export HIDE_UGWPV0=' '
+  export HIDE_UGWPV1='!'
+fi
 
 if [[ $DATM_CDEPS = 'true' ]] || [[ $FV3 = 'true' ]] || [[ $S2S = 'true' ]]; then
   if [[ $HAFS = 'false' ]] || [[ $FV3 = 'true' && $HAFS = 'true' ]]; then
@@ -114,11 +143,21 @@ if [[ $DATM_CDEPS = 'true' ]] || [[ $FV3 = 'true' ]] || [[ $S2S = 'true' ]]; the
   fi
 fi
 
-atparse < ${PATHRT}/parm/${MODEL_CONFIGURE:-model_configure.IN} > model_configure
+if [[ -f ${PATHRT}/parm/${MODEL_CONFIGURE} ]]; then
+  atparse < ${PATHRT}/parm/${MODEL_CONFIGURE} > model_configure
+else
+  echo "Cannot find file ${MODEL_CONFIGURE} set by variable MODEL_CONFIGURE"
+  exit 1
+fi
 
 compute_petbounds_and_tasks
 
-atparse < ${PATHRT}/parm/${NEMS_CONFIGURE:-nems.configure} > nems.configure
+if [[ -f ${PATHRT}/parm/${UFS_CONFIGURE} ]]; then
+  atparse < ${PATHRT}/parm/${UFS_CONFIGURE} > ufs.configure
+else
+  echo "Cannot find file ${UFS_CONFIGURE} set by variable UFS_CONFIGURE"
+  exit 1
+fi
 
 if [[ "Q${INPUT_NEST02_NML:-}" != Q ]] ; then
     INPES_NEST=$INPES_NEST02; JNPES_NEST=$JNPES_NEST02
@@ -185,22 +224,27 @@ if [[ $FV3 == true ]]; then
   fi
 fi
 
+# NoahMP table file
+  cp ${PATHRT}/parm/noahmptable.tbl .
+
+
 # AQM
 if [[ $AQM == .true. ]]; then
   cp ${PATHRT}/parm/aqm/aqm.rc .
 fi
 
 # Field Dictionary
-cp ${PATHRT}/parm/fd_nems.yaml fd_nems.yaml
+cp ${PATHRT}/parm/fd_ufs.yaml fd_ufs.yaml
 
 # Set up the run directory
 source ./fv3_run
 
 if [[ $CPLWAV == .true. ]]; then
-  if [[ $MULTIGRID = 'true' ]]; then
+  if [[ $WW3_MULTIGRID = 'true' ]]; then
     atparse < ${PATHRT}/parm/ww3_multi.inp.IN > ww3_multi.inp
   else
-    atparse < ${PATHRT}/parm/ww3_shel.inp.IN > ww3_shel.inp
+    atparse < ${PATHRT}/parm/ww3_shel.nml.IN > ww3_shel.nml
+    cp ${PATHRT}/parm/ww3_points.list .
   fi
 fi
 
@@ -209,12 +253,14 @@ if [[ $CPLCHM == .true. ]]; then
   atparse < ${PATHRT}/parm/gocart/AERO_HISTORY.rc.IN > AERO_HISTORY.rc
 fi
 
+#TODO: this logic needs to be cleaned up for datm applications w/o
+#ocean or ice
 if [[ $DATM_CDEPS = 'true' ]] || [[ $S2S = 'true' ]]; then
   if [[ $HAFS = 'false' ]]; then
-    atparse < ${PATHRT}/parm/ice_in_template > ice_in
-    atparse < ${PATHRT}/parm/${MOM_INPUT:-MOM_input_template_$OCNRES} > INPUT/MOM_input
+    atparse < ${PATHRT}/parm/ice_in.IN > ice_in
+    atparse < ${PATHRT}/parm/${MOM6_INPUT:-MOM_input_$OCNRES.IN} > INPUT/MOM_input
     atparse < ${PATHRT}/parm/diag_table/${DIAG_TABLE:-diag_table_template} > diag_table
-    atparse < ${PATHRT}/parm/data_table_template > data_table
+    atparse < ${PATHRT}/parm/MOM6_data_table.IN > data_table
   fi
 fi
 
@@ -234,42 +280,74 @@ if [[ $CPLCHM == .true. ]] && [[ $S2S = 'false' ]]; then
 fi
 
 if [[ $DATM_CDEPS = 'true' ]]; then
-  atparse < ${PATHRT}/parm/${DATM_IN_CONFIGURE:-datm_in} > datm_in
+  atparse < ${PATHRT}/parm/${DATM_IN_CONFIGURE:-datm_in.IN} > datm_in
   atparse < ${PATHRT}/parm/${DATM_STREAM_CONFIGURE:-datm.streams.IN} > datm.streams
 fi
 
 if [[ $DOCN_CDEPS = 'true' ]]; then
-  atparse < ${PATHRT}/parm/${DOCN_IN_CONFIGURE:-docn_in} > docn_in
+  atparse < ${PATHRT}/parm/${DOCN_IN_CONFIGURE:-docn_in.IN} > docn_in
   atparse < ${PATHRT}/parm/${DOCN_STREAM_CONFIGURE:-docn.streams.IN} > docn.streams
+fi
+
+if [[ $CDEPS_INLINE = 'true' ]]; then
+  atparse < ${PATHRT}/parm/${CDEPS_INLINE_CONFIGURE:-stream.config.IN} > stream.config
 fi
 
 TPN=$(( TPN / THRD ))
 if (( TASKS < TPN )); then
   TPN=${TASKS}
 fi
+export TPN
+
 NODES=$(( TASKS / TPN ))
 if (( NODES * TPN < TASKS )); then
   NODES=$(( NODES + 1 ))
 fi
+export NODES
+
+UFS_TASKS=${TASKS}
 TASKS=$(( NODES * TPN ))
+export TASKS
+
+PPN=$(( UFS_TASKS / NODES ))
+if (( UFS_TASKS - ( PPN * NODES ) > 0 )); then
+  PPN=$((PPN + 1))
+fi
+export PPN
+export UFS_TASKS
 
 if [[ $SCHEDULER = 'pbs' ]]; then
-  atparse < $PATHRT/fv3_conf/fv3_qsub.IN > job_card
+  if [[ -e $PATHRT/fv3_conf/fv3_qsub.IN_${MACHINE_ID} ]]; then
+    atparse < $PATHRT/fv3_conf/fv3_qsub.IN_${MACHINE_ID} > job_card
+  else
+    echo "Looking for fv3_conf/fv3_qsub.IN_${MACHINE_ID} but it is not found. Exiting"
+    exit 1
+  fi
 elif [[ $SCHEDULER = 'slurm' ]]; then
-  atparse < $PATHRT/fv3_conf/fv3_slurm.IN > job_card
+  if [[ -e $PATHRT/fv3_conf/fv3_slurm.IN_${MACHINE_ID} ]]; then
+    atparse < $PATHRT/fv3_conf/fv3_slurm.IN_${MACHINE_ID} > job_card
+  else
+    echo "Looking for fv3_conf/fv3_slurm.IN_${MACHINE_ID} but it is not found. Exiting"
+    exit 1
+  fi
 elif [[ $SCHEDULER = 'lsf' ]]; then
-  atparse < $PATHRT/fv3_conf/fv3_bsub.IN > job_card
+  if [[ -e $PATHRT/fv3_conf/fv3_bsub.IN_${MACHINE_ID} ]]; then
+    atparse < $PATHRT/fv3_conf/fv3_bsub.IN_${MACHINE_ID} > job_card
+  else
+    echo "Looking for fv3_conf/fv3_bsub.IN_${MACHINE_ID} but it is not found. Exiting"
+    exit 1
+  fi
 fi
 
 ################################################################################
 # Submit test job
 ################################################################################
-
+export OMP_ENV=${OMP_ENV:-""}
 if [[ $SCHEDULER = 'none' ]]; then
 
   ulimit -s unlimited
   if [[ $CI_TEST = 'true' ]]; then
-    eval ${OMP_ENV} mpiexec -n ${TASKS} ${MPI_PROC_BIND} ./fv3.exe >out 2> >(tee err >&3)
+    eval ${OMP_ENV} mpiexec -n ${TASKS} ./fv3.exe >out 2> >(tee err >&3)
   else
     mpiexec -n ${TASKS} ./fv3.exe >out 2> >(tee err >&3)
   fi
@@ -291,12 +369,12 @@ fi
 if [[ $skip_check_results = false ]]; then
   check_results
 else
-  echo                                               >> ${REGRESSIONTEST_LOG}
-  grep "The total amount of wall time" ${RUNDIR}/out >> ${REGRESSIONTEST_LOG}
-  grep "The maximum resident set size" ${RUNDIR}/out >> ${REGRESSIONTEST_LOG}
-  echo                                               >> ${REGRESSIONTEST_LOG}
-  echo "Test ${TEST_NR} ${TEST_NAME} RUN_SUCCESS"    >> ${REGRESSIONTEST_LOG}
-  echo;echo;echo                                     >> ${REGRESSIONTEST_LOG}
+  echo                                               >> ${RT_LOG}
+  grep "The total amount of wall time" ${RUNDIR}/out >> ${RT_LOG}
+  grep "The maximum resident set size" ${RUNDIR}/out >> ${RT_LOG}
+  echo                                               >> ${RT_LOG}
+  echo "Test ${TEST_NR} ${TEST_NAME}_${RT_COMPILER} RUN_SUCCESS"    >> ${RT_LOG}
+  echo;echo;echo                                     >> ${RT_LOG}
 fi
 
 if [[ $SCHEDULER != 'none' ]]; then
@@ -331,4 +409,4 @@ if [[ ${delete_rundir} = true ]]; then
 fi
 
 elapsed=$SECONDS
-echo "Elapsed time $elapsed seconds. Test ${TEST_NAME}"
+echo "Elapsed time $elapsed seconds. Test ${TEST_NAME}_${RT_COMPILER}"

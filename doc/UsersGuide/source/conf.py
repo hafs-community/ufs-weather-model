@@ -41,6 +41,7 @@ numfig = True
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx_rtd_theme',
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
@@ -203,7 +204,8 @@ epub_exclude_files = ['search.html']
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'landda': ('https://land-da-workflow.readthedocs.io/en/latest/', None),
+                       }
 
 # -- Options for todo extension ----------------------------------------------
 

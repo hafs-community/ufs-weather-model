@@ -13,6 +13,7 @@ cpl:                     .false.
 write_dopost:            @[WRITE_DOPOST]
 output_history:          .true.
 quilting:                @[QUILTING]
+quilting_restat:         @[QUILTING_RESTART]
 write_groups:            1
 write_tasks_per_group:   10
 num_files:               2
@@ -20,6 +21,7 @@ filename_base:           'dyn''phy'
 output_file:             @[OUTPUT_FILE]
 write_nemsioflip:        .false.
 write_fsyncflag:         .false.
+zstandard_level:         @[ZSTANDARD_LEVEL]
 ideflate:                @[IDEFLATE]
 nbits:                   0
 ichunk2d:                -1
@@ -51,4 +53,3 @@ dy:       3000.0
 #dlat:                     0.025
 
 output_fh:               @[OUTPUT_FH]
-nsout:                   -1

@@ -22,7 +22,71 @@ export LIST_FILES="atmf006.nc \
                    HURPRS.GrbF06.nest02 \
                    HURPRS.GrbF06.nest03 \
                    HURPRS.GrbF06.nest04 \
-                   HURPRS.GrbF06.nest05"
+                   HURPRS.GrbF06.nest05 \
+                   RESTART/20200825.180000.coupler.res \
+                   RESTART/20200825.180000.fv_core.res.nc \
+                   RESTART/20200825.180000.fv_core.res.nest02.nc \
+                   RESTART/20200825.180000.fv_core.res.nest02.tile7.nc \
+                   RESTART/20200825.180000.fv_core.res.nest03.nc \
+                   RESTART/20200825.180000.fv_core.res.nest03.tile8.nc \
+                   RESTART/20200825.180000.fv_core.res.nest04.nc \
+                   RESTART/20200825.180000.fv_core.res.nest04.tile9.nc \
+                   RESTART/20200825.180000.fv_core.res.nest05.nc \
+                   RESTART/20200825.180000.fv_core.res.nest05.tile10.nc \
+                   RESTART/20200825.180000.fv_core.res.tile1.nc \
+                   RESTART/20200825.180000.fv_core.res.tile2.nc \
+                   RESTART/20200825.180000.fv_core.res.tile3.nc \
+                   RESTART/20200825.180000.fv_core.res.tile4.nc \
+                   RESTART/20200825.180000.fv_core.res.tile5.nc \
+                   RESTART/20200825.180000.fv_core.res.tile6.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.nest02.tile7.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.nest03.tile8.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.nest04.tile9.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.nest05.tile10.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.tile1.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.tile2.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.tile3.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.tile4.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.tile5.nc \
+                   RESTART/20200825.180000.fv_srf_wnd.res.tile6.nc \
+                   RESTART/20200825.180000.fv_tracer.res.nest02.tile7.nc \
+                   RESTART/20200825.180000.fv_tracer.res.nest03.tile8.nc \
+                   RESTART/20200825.180000.fv_tracer.res.nest04.tile9.nc \
+                   RESTART/20200825.180000.fv_tracer.res.nest05.tile10.nc \
+                   RESTART/20200825.180000.fv_tracer.res.tile1.nc \
+                   RESTART/20200825.180000.fv_tracer.res.tile2.nc \
+                   RESTART/20200825.180000.fv_tracer.res.tile3.nc \
+                   RESTART/20200825.180000.fv_tracer.res.tile4.nc \
+                   RESTART/20200825.180000.fv_tracer.res.tile5.nc \
+                   RESTART/20200825.180000.fv_tracer.res.tile6.nc \
+                   RESTART/20200825.180000.phy_data.nest02.tile7.nc \
+                   RESTART/20200825.180000.phy_data.nest03.tile8.nc \
+                   RESTART/20200825.180000.phy_data.nest04.tile9.nc \
+                   RESTART/20200825.180000.phy_data.nest05.tile10.nc \
+                   RESTART/20200825.180000.phy_data.tile1.nc \
+                   RESTART/20200825.180000.phy_data.tile2.nc \
+                   RESTART/20200825.180000.phy_data.tile3.nc \
+                   RESTART/20200825.180000.phy_data.tile4.nc \
+                   RESTART/20200825.180000.phy_data.tile5.nc \
+                   RESTART/20200825.180000.phy_data.tile6.nc \
+                   RESTART/20200825.180000.sfc_data.nest02.tile7.nc \
+                   RESTART/20200825.180000.sfc_data.nest03.tile8.nc \
+                   RESTART/20200825.180000.sfc_data.nest04.tile9.nc \
+                   RESTART/20200825.180000.sfc_data.nest05.tile10.nc \
+                   RESTART/20200825.180000.sfc_data.tile1.nc \
+                   RESTART/20200825.180000.sfc_data.tile2.nc \
+                   RESTART/20200825.180000.sfc_data.tile3.nc \
+                   RESTART/20200825.180000.sfc_data.tile4.nc \
+                   RESTART/20200825.180000.sfc_data.tile5.nc \
+                   RESTART/20200825.180000.sfc_data.tile6.nc \
+                   RESTART/fv_BC_ne.res.nest02.nc \
+                   RESTART/fv_BC_ne.res.nest03.nc \
+                   RESTART/fv_BC_ne.res.nest04.nc \
+                   RESTART/fv_BC_ne.res.nest05.nc \
+                   RESTART/fv_BC_sw.res.nest02.nc \
+                   RESTART/fv_BC_sw.res.nest03.nc \
+                   RESTART/fv_BC_sw.res.nest04.nc \
+                   RESTART/fv_BC_sw.res.nest05.nc"
 
 export_fv3
 export_hafs
@@ -33,9 +97,7 @@ export RESTART_N=${FHMAX}
 export atm_omp_num_threads=2
 export DT_ATMOS=90
 export IDEFLATE=1
-export NFHMAX_HF=-1
-export NFHOUT_HF=3
-export NFHOUT=3
+export OUTPUT_FH='3 -1'
 export OUTPUT_FILE="'netcdf' 'netcdf'"
 export SDAY=25
 export SHOUR=12
@@ -91,7 +153,7 @@ export DLON_5=0.05
 export DLAT_5=0.05
 
 export BLOCKSIZE=${BLOCKSIZE:-24}
-export CCPP_SUITE="FV3_HAFS_v1_gfdlmp_tedmf"
+export CCPP_SUITE=FV3_HAFS_v1_gfdlmp_tedmf
 export DEFLATE_LEVEL=-1
 export INPES=4
 export JNPES=5
@@ -165,8 +227,8 @@ export FULL_ZS_FILTER=.false.
 export N_ZS_FILTER=0
 
 export CMEPS=false
-export RUNTYPE="startup"
-export USE_COLDSTART="false"
+export RUNTYPE=startup
+export USE_COLDSTART=false
 
 export FIELD_TABLE=field_table_hafs
 export DIAG_TABLE=diag_table_hafs_template
@@ -175,10 +237,6 @@ export INPUT_NEST02_NML=input_nest_hafs.nml.IN
 export INPUT_NEST03_NML=input_nest_hafs.nml.IN
 export INPUT_NEST04_NML=input_nest_hafs.nml.IN
 export INPUT_NEST05_NML=input_nest_hafs.nml.IN
-export MODEL_CONFIGURE="model_configure_hafs.IN"
-export NEMS_CONFIGURE="nems.configure.hafs_atm.IN"
-export FV3_RUN="hafs_fv3_run.IN"
-
-if [[ $MACHINE_ID = cheyenne.* ]]; then
-  TPN=18
-fi
+export MODEL_CONFIGURE=model_configure_hafs.IN
+export UFS_CONFIGURE=ufs.configure.hafs_atm.IN
+export FV3_RUN=hafs_fv3_run.IN

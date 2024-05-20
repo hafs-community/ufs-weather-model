@@ -10,9 +10,9 @@ export CNTL_DIR=hafs_regional_atm_wav
 
 export LIST_FILES="atmf006.nc \
                    sfcf006.nc \
-                   out_grd.ww3 \
-                   out_pnt.ww3 \
-                   20190829.060000.restart.ww3 \
+                   20190829.060000.out_grd.ww3 \
+                   20190829.060000.out_pnt.ww3 \
+                   ufs.hafs.ww3.r.2019-08-29-21600 \
                    ufs.hafs.cpl.r.2019-08-29-21600.nc"
 
 export_fv3
@@ -24,9 +24,7 @@ export FHMAX=6
 export RESTART_N=${FHMAX}
 export DT_ATMOS=180
 export IDEFLATE=1
-export NFHMAX_HF=-1
-export NFHOUT_HF=3
-export NFHOUT=3
+export OUTPUT_FH='3 -1'
 export OUTPUT_FILE="'netcdf' 'netcdf'"
 export SDAY=29
 export SHOUR=00
@@ -45,7 +43,7 @@ export DLON=0.1
 export DLAT=0.1
 
 export BLOCKSIZE=40
-export CCPP_SUITE="FV3_HAFS_v1_gfdlmp_tedmf"
+export CCPP_SUITE=FV3_HAFS_v1_gfdlmp_tedmf
 export DEFLATE_LEVEL=-1
 export INPES=20
 export JNPES=12
@@ -87,39 +85,20 @@ export CPLWAV=.true.
 export CPLWAV2ATM=.true.
 export CPL_IMP_MRG=.true.
 
-# shel.inp
-export INPUT_CURFLD='F F     Currents'
-export DTFLD="10800"
-export DTPNT="10800"
-export GOFILETYPE=""
-export POFILETYPE=""
-export OUTPARS_WAV="WND HS T01 T02 DIR FP DP PHS PTP PDIR UST CHA USP"
-export UNIPOINTS='ww3'
-export WW3GRIDLINE="'ww3' 'no' 'no' 'CPL:native' 'no' 'no' 'no' 'no' 'no' 'no'  1  1  0.00 1.00  F"
-export WW3RSTDTHR=${FHMAX}
-export DT_2_RST="$(printf "%02d" $(( ${WW3RSTDTHR}*3600 )))"
-export RUN_BEG="${SYEAR}${SMONTH}${SDAY} $(printf "%02d" $(( ${SHOUR}  )))0000"
-export RUN_END="20190829 060000"
-export OUT_BEG=$RUN_BEG
-export OUT_END=$RUN_END
-export RST_BEG=$RUN_BEG
-export RST_2_BEG=$RUN_BEG
-export RST_END=$RUN_END
-export RST_2_END=$RUN_END
-
 export CDEPS_DOCN=false
 export OCEAN_START_DTG=43340.00000
 
-export atm_model="fv3"
-export ocn_model=""
-export wav_model="ww3"
+export atm_model=fv3
+export wav_model=ww3
 WAV_tasks=60
 export coupling_interval_sec=360
-export MESH_ATM="unset"
+export MESH_ATM=unset
+# ATM-WAV coupling only
+export WW3_CUR='F'
 
 export FIELD_TABLE=field_table_hafs
 export DIAG_TABLE=diag_table_hafs_template
 export INPUT_NML=input_regional_hafs.nml.IN
-export MODEL_CONFIGURE="model_configure_hafs.IN"
-export NEMS_CONFIGURE="nems.configure.hafs_atm_wav.IN"
+export MODEL_CONFIGURE=model_configure_hafs.IN
+export UFS_CONFIGURE=ufs.configure.hafs_atm_wav.IN
 export FV3_RUN="hafs_fv3_run.IN hafs_ww3_run.IN"
