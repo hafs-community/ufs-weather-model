@@ -67,7 +67,7 @@ The UFS :term:`WM` repository supports the :term:`UFS` short- and medium-range w
   * - :term:`FV3` dynamical core
     - https://github.com/NOAA-GFDL/GFDL_atmos_cubed_sphere
   * - Stochastic physics pattern generator
-    - https://github.com/noaa-psd/stochastic_physics
+    - https://github.com/NOAA-PSL/stochastic_physics
   * - Modular Ocean Model (:term:`MOM6`)
     - https://github.com/NOAA-EMC/MOM6
   * - HYbrid Coordinate Ocean Model (:term:`HYCOM`)
@@ -108,7 +108,8 @@ The umbrella repository for the UFS WM is named ``ufs-weather-model``. Under thi
     ├── CDEPS-interface
     │     └── CDEPS
     │         ├── (datm)                         -------- CDEPS DATM
-    │         └── (docn)                         -------- CDEPS DOCN
+    │         ├── (docn)                         -------- CDEPS DOCN
+    │         └── (dice)                         -------- CDEPS DICE
     ├── CICE-interface
     │    └── CICE                                -------- CICE6 sea ice model
     │        ├── (icepack)                       -------- Sea ice column physics
