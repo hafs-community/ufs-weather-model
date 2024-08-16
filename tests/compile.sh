@@ -69,6 +69,8 @@ case ${MACHINE_ID} in
     # Activate lua environment for gaea c5
     if [[ ${MACHINE_ID} == gaea ]]; then
       module reset
+    elif  [[ $MACHINE_ID == gaeaC6 ]]; then
+      source ${MODULESHOME}/init/bash
     fi
     # Load fv3 module
     module use "${PATHTR}/modulefiles"

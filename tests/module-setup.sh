@@ -70,6 +70,9 @@ elif [[ ${MACHINE_ID} = gaea ]] ; then
     fi
     module reset
 
+elif [[ $MACHINE_ID = gaeaC6 ]] ; then
+    source /opt/cray/pe/lmod/8.7.31/init/bash
+
 elif [[ ${MACHINE_ID} = expanse ]]; then
     # We are on SDSC Expanse
     if ( ! eval module help > /dev/null 2>&1 ) ; then
