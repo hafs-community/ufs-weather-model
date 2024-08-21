@@ -1,7 +1,0 @@
-  mkdir INPUT OUTPUT RESTART
-  cp /scratch1/NCEPDEV/stmp2/Bin.Li/FV3_RT/input-data-20221101/FV3_hafs_input_data/INPUT_hafs_regional_atm_mom6/FV3/* ./INPUT/
-  mv ./INPUT/fv3_grid_spec.nc grid_spec.nc
-  cp /scratch1/NCEPDEV/stmp2/Bin.Li/FV3_RT/input-data-20221101/FV3_hafs_input_data/INPUT_hafs_regional_atm_mom6/MOM6/* ./INPUT/
-  mv ./INPUT/data_table .
-  cp /scratch1/NCEPDEV/stmp2/Bin.Li/FV3_RT/input-data-20221101/FV3_hafs_input_data/INPUT_hafs_regional_atm_mom6/MOM6_MESH/* .
-  cp -r /scratch1/NCEPDEV/stmp2/Bin.Li/FV3_RT/input-data-20221101/FV3_hafs_input_data/INPUT_hafs_regional_atm_mom6/DATM_INPUT .

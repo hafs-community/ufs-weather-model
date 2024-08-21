@@ -1,6 +1,19 @@
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -g -traceback -fpp -fno-alias -auto -safe-cray-ptr -ftz -assume byterecl -sox -align array64byte -qno-opt-dynamic-align")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qno-opt-dynamic-align -sox -fp-model source")
 
+# warning #5462: Global name too long.
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -diag-disable 5462")
+
+# remark #7712: This variable has not been used.
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -diag-disable 7712")
+
+# remark #8291: Recommended relationship between field width 'W' and the number of fractional digits 'D' in this edit descriptor is 'W>=D+7'.
+set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -diag-disable 8291")
+
+if(CMAKE_Platform STREQUAL "derecho.intel")
+  set(CMAKE_Fortran_LINK_FLAGS "-Wl,--copy-dt-needed-entries")
+endif()
+
 if(NOT 32BIT)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -real-size 64")
 endif()
@@ -9,11 +22,6 @@ if(DEBUG)
     add_definitions(-DDEBUG)
     set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -O0 -check -check noarg_temp_created -check nopointer -warn -warn noerrors -fp-stack-check -fstack-protector-all -fpe0 -debug -ftrapuv -init=snan,arrays")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -ftrapuv")
-    if(DISABLE_FMA)
-      # Should not be needed in DEBUG mode, but just to be safe.
-      set(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -no-fma")
-      set(CMAKE_C_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -no-fma")
-    endif()
 else()
     if(FASTER)
       set(CMAKE_Fortran_FLAGS_RELEASE "-O3 -fp-model precise -assume buffered_stdout -fno-alias -align all -debug minimal -qoverride-limits -ftz -no-ip")
@@ -34,10 +42,6 @@ else()
     elseif(AVX)
         set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -march=core-avx-i")
         set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=core-avx-i")
-    endif()
-    if(DISABLE_FMA)
-      set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -no-fma")
-      set(CMAKE_C_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -no-fma")
     endif()
 endif()
 

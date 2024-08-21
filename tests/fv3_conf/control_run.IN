@@ -10,13 +10,21 @@ elif [ $NPX = 385 ]; then
 elif [ $NPX = 769 ]; then
   inputdir=FV3_input_data768
 fi
-echo "inputdir=$inputdir,NPX=$NPX"
+
+echo "inputdir=$inputdir,NPX=$NPX,NESTED=$NESTED"
 
 OPNREQ_TEST=${OPNREQ_TEST:-false}
+V2_SFC_FILE=${V2_SFC_FILE:-false}
 SUFFIX=${RT_SUFFIX}
 if [ $WARM_START = .false. ]; then
   mkdir INPUT RESTART
-  cp -r @[INPUTDATA_ROOT]/${inputdir}/INPUT_L127/* ./INPUT/.
+  if [ "$NESTED" = .true. ]; then
+    cp -r @[INPUTDATA_ROOT]/${inputdir}/INPUT_L127_nested/* ./INPUT/.
+  elif [ "$V2_SFC_FILE" = "true" ]; then
+    cp -r @[INPUTDATA_ROOT]/${inputdir}/INPUT_L127_v2_sfc/* ./INPUT/.
+  else
+    cp -r @[INPUTDATA_ROOT]/${inputdir}/INPUT_L127/* ./INPUT/.
+  fi
 else
   mkdir INPUT RESTART
 
@@ -82,7 +90,6 @@ else
       cp $RFILE INPUT/${RFILE_NEW}
     done
   fi
-
 fi
 
 if [ $TILEDFIX = .true. ]; then
@@ -103,12 +110,12 @@ else
 fi
 
 if [ $CPLWAV = .true. ]; then
-  if [ $MULTIGRID = 'true' ]; then
+  if [ $WW3_MULTIGRID = 'true' ]; then
     cp    @[INPUTDATA_ROOT_WW3]/mod_def.pointsatmw mod_def.points
-    cp    @[INPUTDATA_ROOT_WW3]/@[MODDEF_WAV] .
+    cp    @[INPUTDATA_ROOT_WW3]/@[WW3_MODDEF] .
     cp    @[INPUTDATA_ROOT_WW3]/rmp_src* .
   else
-    cp    @[INPUTDATA_ROOT_WW3]/@[MODDEF_WAV] mod_def.ww3
+    cp    @[INPUTDATA_ROOT_WW3]/@[WW3_MODDEF] mod_def.ww3
     cp    @[INPUTDATA_ROOT_WW3]/@[MESH_WAV] .
   fi
 fi
@@ -129,7 +136,7 @@ fi
 #merra2
 if [ $USE_MERRA2 = .true. ]; then
   for n in 01 02 03 04 05 06 07 08 09 10 11 12; do
-    cp @[INPUTDATA_ROOT]/FV3_input_data_INCCN_aeroclim/MERRA2/merra2.aerclim.2003-2014.m${n}.nc aeroclim.m${n}.nc
+    cp @[INPUTDATA_ROOT]/FV3_input_data_INCCN_aeroclim/MERRA2_y14_24/merra2_1423_${n}.nc aeroclim.m${n}.nc
   done
   cp    @[INPUTDATA_ROOT]/FV3_input_data_INCCN_aeroclim/aer_data/LUTS/optics_BC.v1_3.dat  optics_BC.dat
   cp    @[INPUTDATA_ROOT]/FV3_input_data_INCCN_aeroclim/aer_data/LUTS/optics_OC.v1_3.dat  optics_OC.dat
