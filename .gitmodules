@@ -1,7 +1,7 @@
 [submodule "FV3"]
   path = FV3
   url = https://github.com/hafs-community/fv3atm
-  branch = feature/hafs.v2.0.1
+  branch = feature/hafs.v2.0.1_3dtke
 [submodule "WW3"]
   path = WW3
   url = https://github.com/hafs-community/WW3
