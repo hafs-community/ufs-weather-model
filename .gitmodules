@@ -1,11 +1,11 @@
 [submodule "FV3"]
   path = FV3
   url = https://github.com/hafs-community/fv3atm
-  branch = feature/hafsv2p1_phase3
+  branch = production/hafs.v2.1
 [submodule "WW3"]
   path = WW3
   url = https://github.com/hafs-community/WW3
-  branch = production/hafs.v2
+  branch = production/hafs.v2.1
 [submodule "stochastic_physics"]
   path = stochastic_physics
   url = https://github.com/NOAA-PSL/stochastic_physics
@@ -33,14 +33,6 @@
 [submodule "CDEPS"]
   path = CDEPS-interface/CDEPS
   url = https://github.com/NOAA-EMC/CDEPS
-  branch = develop
-[submodule "GOCART"]
-  path = GOCART
-  url = https://github.com/GEOS-ESM/GOCART
-  branch = develop
-[submodule "AQM"]
-  path = AQM
-  url = https://github.com/NOAA-EMC/AQM
   branch = develop
 [submodule "NOAHMP"]
   path = NOAHMP-interface/noahmp
