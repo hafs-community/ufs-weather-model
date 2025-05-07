@@ -1,15 +1,15 @@
 [submodule "FV3"]
   path = FV3
   url = https://github.com/hafs-community/fv3atm
-  branch = production/hafs.v2.1
+  branch = bugfix/hafsv2p1_final_stochy
 [submodule "WW3"]
   path = WW3
   url = https://github.com/hafs-community/WW3
   branch = production/hafs.v2.1
 [submodule "stochastic_physics"]
   path = stochastic_physics
-  url = https://github.com/NOAA-PSL/stochastic_physics
-  branch = master
+  url = https://github.com/hafs-community/stochastic_physics
+  branch = bugfix/hafsv2p1_final_stochy
 [submodule "CMakeModules"]
   path = CMakeModules
   url = https://github.com/NOAA-EMC/CMakeModules
