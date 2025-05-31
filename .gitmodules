@@ -1,11 +1,11 @@
 [submodule "FV3"]
   path = FV3
   url = https://github.com/hafs-community/fv3atm
-  branch = production/hafs.v2.1
+  branch = support/HAFS
 [submodule "WW3"]
   path = WW3
   url = https://github.com/hafs-community/WW3
-  branch = production/hafs.v2.1
+  branch = support/HAFS
 [submodule "stochastic_physics"]
   path = stochastic_physics
   url = https://github.com/NOAA-PSL/stochastic_physics
@@ -25,7 +25,7 @@
 [submodule "MOM6"]
   path = MOM6-interface/MOM6
   url = https://github.com/hafs-community/MOM6
-  branch = production/hafs.v2.1
+  branch = support/HAFS
 [submodule "CICE"]
   path = CICE-interface/CICE
   url = https://github.com/NOAA-EMC/CICE
