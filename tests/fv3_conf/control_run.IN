@@ -1,14 +1,20 @@
 rm -fr INPUT RESTART
+# Set default ores to determine fix_tiled input directory
 if [ $NPX = 97 ]; then
   inputdir=FV3_input_data
+  ores=100
 elif [ $NPX = 49 ]; then
   inputdir=FV3_input_data48
+  ores=500
 elif [ $NPX = 193 ]; then
   inputdir=FV3_input_data192
+  ores=050
 elif [ $NPX = 385 ]; then
   inputdir=FV3_input_data384
+  ores=025
 elif [ $NPX = 769 ]; then
   inputdir=FV3_input_data768
+  ores=025
 fi
 
 echo "inputdir=$inputdir,NPX=$NPX,NESTED=$NESTED"
@@ -23,7 +29,7 @@ if [ $WARM_START = .false. ]; then
   elif [ "$V2_SFC_FILE" = "true" ]; then
     cp -r @[INPUTDATA_ROOT]/${inputdir}/INPUT_L127_v2_sfc/* ./INPUT/.
   else
-    cp -r @[INPUTDATA_ROOT]/${inputdir}/INPUT_L127/* ./INPUT/.
+    cp -r @[INPUTDATA_ROOT]/${inputdir}/INPUT_L127_gfsv17/* ./INPUT/.
   fi
 else
   mkdir INPUT RESTART
@@ -40,7 +46,7 @@ else
       cp  ../${DEP_RUN}${SUFFIX}/RESTART/${RFILE} .
       ls -1 ${RFILE}>rpointer.cpl
     fi
-    RFILE=ufs.atmw.ww3.r.${RESTART_FILE_SUFFIX_SECS}
+    RFILE=ufs.atmw.ww3.r.${RESTART_FILE_SUFFIX_SECS}.nc
     cp ../${DEP_RUN}${SUFFIX}/${RFILE} .
   fi
 
@@ -93,10 +99,10 @@ else
 fi
 
 if [ $TILEDFIX = .true. ]; then
-    if [ $CPLLND == .true. ]; then
-        cp    @[INPUTDATA_ROOT]/FV3_fix_tiled/@[ATMRES]/@[ATMRES]*.nc INPUT/.
-    else
+    if [ "$NESTED" = .true. ]; then
         cp    @[INPUTDATA_ROOT]/FV3_fix_tiled/@[ATMRES]/@[ATMRES]*.nc .
+    else
+        cp    @[INPUTDATA_ROOT]/FV3_fix_tiled/@[ATMRES]mx${ores}/@[ATMRES]*.nc .
     fi
     cp    @[INPUTDATA_ROOT]/FV3_fix/global_glacier.2x2.grb .
     cp    @[INPUTDATA_ROOT]/FV3_fix/global_maxice.2x2.grb .
@@ -110,22 +116,16 @@ else
 fi
 
 if [ $CPLWAV = .true. ]; then
-  if [ $WW3_MULTIGRID = 'true' ]; then
-    cp    @[INPUTDATA_ROOT_WW3]/mod_def.pointsatmw mod_def.points
-    cp    @[INPUTDATA_ROOT_WW3]/@[WW3_MODDEF] .
-    cp    @[INPUTDATA_ROOT_WW3]/rmp_src* .
-  else
     cp    @[INPUTDATA_ROOT_WW3]/@[WW3_MODDEF] mod_def.ww3
     cp    @[INPUTDATA_ROOT_WW3]/@[MESH_WAV] .
-  fi
 fi
 
 #inline post
 if [[ $POSTAPP = 'global' ]]; then
-  cp    ${PATHRT}/parm/post_itag_gfs itag
-  cp    ${PATHRT}/parm/postxconfig-NT-gfs.txt postxconfig-NT.txt
-  cp    ${PATHRT}/parm/postxconfig-NT-gfs_FH00.txt postxconfig-NT_FH00.txt
-  cp    ${PATHRT}/parm/params_grib2_tbl_new params_grib2_tbl_new
+  cp    ${PATHRT}/parm/@[POST_ITAG] itag
+  cp    ${PATHRT}/parm/@[POSTXCONFIG] postxconfig-NT.txt
+  cp    ${PATHRT}/parm/@[POSTXCONFIG_FH00] postxconfig-NT_FH00.txt
+  cp    ${PATHRT}/../FV3/upp/parm/params_grib2_tbl_new params_grib2_tbl_new
 fi
 
 #rrtmgp
@@ -164,6 +164,18 @@ if [ $IMP_PHYSICS = 8 ]; then
   cp    @[INPUTDATA_ROOT]/FV3_fix/qr_acr_qgV2.dat .
   cp    @[INPUTDATA_ROOT]/FV3_fix/freezeH2O.dat .
   cp    @[INPUTDATA_ROOT]/FV3_fix/CCN_ACTIVATE.BIN .
+fi
+
+#TEMPO
+if [ $IMP_PHYSICS = 88 ]; then
+  cp    @[INPUTDATA_ROOT]/FV3_fix/CCN_ACTIVATE.BIN .
+  rm qr_acr_qsV2.dat
+  rm qr_acr_qgV2.dat
+  rm freezeH2O.dat
+  cp /scratch2/BMC/wrfruc/jensen/ufs_tables/MP_TEMPO_freezeH2O.dat .
+  cp /scratch2/BMC/wrfruc/jensen/ufs_tables/MP_TEMPO_QRacrQG.dat .
+  cp /scratch2/BMC/wrfruc/jensen/ufs_tables/MP_TEMPO_HAILAWARE_QRacrQG.dat .
+  cp /scratch2/BMC/wrfruc/jensen/ufs_tables/MP_TEMPO_QRacrQS.dat .
 fi
 
 #prognostic aerosols
