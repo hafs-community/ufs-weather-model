@@ -1,11 +1,11 @@
 [submodule "UFSATM"]
   path = UFSATM
   url = https://github.com/hafs-community/ufsatm
-  branch = feature/hafsv2p2_phase2
+  branch = feature/hafsv2p2_final
 [submodule "WW3"]
   path = WW3
   url = https://github.com/hafs-community/WW3
-  branch = feature/hafsv2p2_baseline
+  branch = feature/hafsv2p2_final
 [submodule "stochastic_physics"]
   path = stochastic_physics
   url = https://github.com/NOAA-PSL/stochastic_physics
