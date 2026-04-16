@@ -8,7 +8,10 @@ if (CMAKE_Fortran_COMPILER_ID MATCHES "GNU" AND CMAKE_Fortran_COMPILER_VERSION V
   message(FATAL_ERROR "GNU Compiler >= 9 is required")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_Platform $ENV{CMAKE_Platform})
+
+list(APPEND CMAKE_MODULE_PATH $ENV{ESMF_ROOT}/cmake)
+list(APPEND CMAKE_MODULE_PATH $ENV{esmf_ROOT}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMakeModules/Modules)
 
 ###############################################################################
@@ -83,8 +86,8 @@ set(PDLIB           OFF CACHE BOOL "Enable Domain Decomposition in WW3 via PDLIB
 set(PDLIB_BT4       OFF CACHE BOOL "Enable Domain Decomposition in WW3 via PDLIB with BT4")
 set(CDEPS_INLINE    OFF CACHE BOOL "Enable CDEPS inline capability")
 set(HYDRO           OFF CACHE BOOL "Enable hydrostatic set")
+set(UFS_TRACING     OFF CACHE BOOL "Enable UFS Tracing")
 
-set(CMAKE_Platform $ENV{CMAKE_Platform})
 if(CMAKE_Platform)
   message("")
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/cmake/configure_${CMAKE_Platform}.cmake)
@@ -133,7 +136,8 @@ message("PARALLEL_NETCDF .. ${PARALLEL_NETCDF}")
 message("JEDI_DRIVER ...... ${JEDI_DRIVER}")
 message("CMEPS_AOFLUX ..... ${CMEPS_AOFLUX}")
 message("CDEPS_INLINE ..... ${CDEPS_INLINE}")
-message("HYDRO  ........... ${HYDRO}")
+message("HYDRO ............ ${HYDRO}")
+message("UFS_TRACING ...... ${UFS_TRACING}")
 
 message("")
 
@@ -160,8 +164,8 @@ if(OPENMP)
 endif()
 
 find_package(NetCDF 4.7.4 REQUIRED C Fortran)
+set(USE_ESMF_STATIC_LIBS ON)
 find_package(ESMF 8.8.0 MODULE REQUIRED)
-#add_library(ESMF::ESMF ALIAS esmf)
 if(FMS)
   find_package(FMS 2022.04 REQUIRED COMPONENTS R4 R8)
   if(APP MATCHES "^(HAFSW)$")
@@ -178,7 +182,7 @@ if(FMS)
   endif()
 endif()
 
-if(CMEPS)
+if(CMEPS OR CDEPS)
   find_package(PIO 2.5.3 REQUIRED COMPONENTS C Fortran)
 endif()
 
@@ -194,6 +198,11 @@ endif()
 # Configure Python
 find_package(Python 3.6 REQUIRED COMPONENTS Interpreter)
 message("Found Python: ${Python_EXECUTABLE}")
+
+if(UFS_TRACING)
+  add_subdirectory(ufs_tracing)
+  add_compile_definitions(UFS_TRACING)
+endif()
 
 ###############################################################################
 ### stochastic_physics
@@ -305,6 +314,9 @@ endif()
 ### UFS Library
 ###############################################################################
 add_library(ufs driver/UFSDriver.F90)
+if(UFS_TRACING)
+  add_dependencies(ufs ufs_tracing)
+endif()
 set_target_properties(ufs PROPERTIES Fortran_MODULE_DIRECTORY
                                      ${CMAKE_CURRENT_BINARY_DIR}/mod)
 target_include_directories(ufs INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/mod>
@@ -330,7 +342,7 @@ if(WW3)
   target_link_libraries(ufs PUBLIC WW3::WW3)
 endif()
 
-list(APPEND _ufs_libs_public esmf)
+list(APPEND _ufs_libs_public ESMF::ESMF)
 
 if(STOCH_PHYS)
   list(APPEND _ufs_libs_public stochastic_physics)
@@ -406,7 +418,7 @@ target_link_libraries(ufs PUBLIC "${_ufs_libs_public}")
 ###############################################################################
 add_executable(ufs_model driver/UFS.F90)
 add_dependencies(ufs_model ufs)
-target_link_libraries(ufs_model ufs esmf w3emc::w3emc_d)
+target_link_libraries(ufs_model ufs ESMF::ESMF w3emc::w3emc_d)
 set_target_properties(ufs_model PROPERTIES LINKER_LANGUAGE Fortran)
 
 ###############################################################################
