@@ -5,7 +5,7 @@
 [submodule "WW3"]
   path = WW3
   url = https://github.com/hafs-community/WW3
-  branch = feature/hafsv2p2_final
+  branch = production/hafs.v2.3
 [submodule "stochastic_physics"]
   path = stochastic_physics
   url = https://github.com/NOAA-PSL/stochastic_physics
