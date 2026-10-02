@@ -1,9 +1,7 @@
 help([[
-loads UFS Model prerequisites for Wcoss3/Intel
+loads UFS Model prerequisites for Nimbus/Intel
 ]])
 
-prepend_path("MODULEPATH", "/opt/intel/oneapi/mpi/2021.18/etc/modulefiles/mpi")
-prepend_path("MODULEPATH", "/lfs/work/alexander_richert/stack/spack-stack/envs/nco-core-gcc-11.5.0/modules_flat/Core")
 prepend_path("MODULEPATH", "/lfs/work/alexander_richert/stack/spack-stack/envs/nco-sci-intel-2021.10.0/modules_flat/Core")
 
 cmake_ver=os.getenv("cmake_ver") or "3.31.11"
@@ -32,6 +30,7 @@ local ufs_modules = {
   {["w3emc"]           = "2.13.0"},
   {["gftl-shared"]     = "1.12.0"},
   {["mapl"]            = "2.53.4-esmf-8.8.0"},
+  {["scotch"]          = "7.0.7"},
 }
 
 for i = 1, #ufs_modules do
@@ -42,20 +41,14 @@ for i = 1, #ufs_modules do
 end
 
 
-nccmp_ver=os.getenv("nccmp_ver") or "1.9.1.0"
---load(pathJoin("nccmp", nccmp_ver))
-
-scotch_ver=os.getenv("scotch_ver") or "7.0.7"
-load(pathJoin("scotch", scotch_ver))
-
-setenv("CC", "mpiicx")
-setenv("CXX", "mpiicpx")
+setenv("CC", "mpiicc")
+setenv("CXX", "mpiicpc")
 setenv("FC", "mpiifort")
-setenv("I_MPI_CC", "icx")
-setenv("I_MPI_CXX", "icpx")
+setenv("I_MPI_CC", "icc")
+setenv("I_MPI_CXX", "icpc")
 setenv("I_MPI_F90", "ifort")
 
-setenv("CMAKE_Platform", "wcoss2.intel")
+setenv("CMAKE_Platform", "nimbus.intel")
 
 whatis("Description: UFS build environment")
 whatis("Description: UFS build environment common libraries")
